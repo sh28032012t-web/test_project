@@ -1,11 +1,10 @@
-from config import app
-from database_project.classic_database import engine
+from schemes.BD.database import engine
 from sqlalchemy import text
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 
-@router.get("/users/{user_id}")
+@router.get("/users/{user_id}", tags=["Users"], summary="Find user")
 def find_user(user_id: int):
     with engine.connect() as connection:
         result = connection.execute(
