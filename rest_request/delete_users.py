@@ -1,19 +1,19 @@
+from schemes.api_router import router
 from schemes.BD.database import engine
 from sqlalchemy import text
 from fastapi import HTTPException
-from schemes.api_router import router
 
-@router.get("/users/{user_id}", tags=["Users"], summary="Find user")
-def find_user(user_id: int):
-    with engine.connect() as connection:
+@router.delete("/users/{user_id}", tags=["Users"], summary="Remove user", status_code=204)
+def delete_user(user_id: int):
+    with engine.begin() as connection:
         result = connection.execute(
             text("""
-                SELECT *
-                FROM users
+                DELETE FROM users
                 WHERE id = :user_id
+                RETURNING *
             """),
             {
-                "user_id": user_id
+                "user_id": user_id,
             }
         )
         user = result.fetchone()
@@ -23,4 +23,4 @@ def find_user(user_id: int):
                 detail="User not found!"
             )
         
-        return dict(user._mapping)
+        return None

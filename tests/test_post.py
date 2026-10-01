@@ -1,12 +1,9 @@
 import rest_request.post_users as get_module
 from rest_request.post_users import create_user
-from fastapi.testclient import TestClient
+from schemes.client_router import client
 from schemes.BD.database_test import engine_test
-from schemes.config import app
 from schemes.model import CreateUser
 from sqlalchemy import text
-
-client = TestClient(app)
 
 get_module.engine = engine_test
 
