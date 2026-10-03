@@ -4,6 +4,7 @@ from schemes.client_router import client
 from schemes.BD.database_test import engine_test
 from sqlalchemy import text
 from schemes.model import DeleteUser
+from schemes.model import ResponseUser
 
 get_module.engine = engine_test
 
@@ -13,7 +14,7 @@ user_body = DeleteUser(
     age=1
 )
 
-def test_create_and_delete_user():
+def test_remove_user():
     with engine_test.begin() as connection:
         result = connection.execute(
             text("""
@@ -29,8 +30,13 @@ def test_create_and_delete_user():
         )
         user = result.fetchone()
         
-        dict_user = dict(user._mapping)
+        dict_user = ResponseUser(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            age=user.age,
+        )
         
-    delete_users = delete_user(dict_user["id"])
+    delete_users = delete_user(dict_user.id)
     
     assert delete_users is None

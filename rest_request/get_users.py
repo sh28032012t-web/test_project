@@ -2,6 +2,7 @@ from schemes.BD.database import engine
 from sqlalchemy import text
 from fastapi import HTTPException
 from schemes.api_router import router
+from schemes.model import ResponseUser
 
 @router.get("/users/{user_id}", tags=["Users"], summary="Find user")
 def find_user(user_id: int):
@@ -23,4 +24,9 @@ def find_user(user_id: int):
                 detail="User not found!"
             )
         
-        return dict(user._mapping)
+        return ResponseUser(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            age=user.age,
+        )

@@ -2,6 +2,7 @@ from schemes.BD.database import engine
 from sqlalchemy import text
 from schemes.api_router import router
 from schemes.model import CreateUser
+from schemes.model import ResponseUser
 
 @router.post("/users", tags=["Users"], summary="Create user", status_code=201)
 def create_user(post_user: CreateUser):
@@ -20,4 +21,9 @@ def create_user(post_user: CreateUser):
         )
         user = result.fetchone()
         
-        return dict(user._mapping)
+        return ResponseUser(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            age=user.age,
+        )

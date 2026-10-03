@@ -1,6 +1,7 @@
 from schemes.BD.database import engine
 from schemes.api_router import router
 from schemes.model import UpdateUser
+from schemes.model import ResponseUser
 
 from fastapi import HTTPException
 from sqlalchemy import text
@@ -31,4 +32,9 @@ def update_user(user_id: int, put_user: UpdateUser):
                 detail="User not found!"
             )
         
-        return dict(user._mapping)
+        return ResponseUser(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            age=user.age,
+        )

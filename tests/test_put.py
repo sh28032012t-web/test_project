@@ -2,6 +2,7 @@ import rest_request.put_users as get_module
 from rest_request.put_users import update_user
 from schemes.BD.database_test import engine_test
 from schemes.model import UpdateUser
+from schemes.model import ResponseUser
 from sqlalchemy import text
 
 
@@ -24,7 +25,12 @@ def test_update_user():
         )
         
         user = result.fetchone()
-        user_dict = dict(user._mapping)
+        user_dict = ResponseUser(
+                        id=user.id,
+                        first_name=user.first_name,
+                        last_name=user.last_name,
+                        age=user.age,
+                    )
     
     update_body = UpdateUser(
         first_name="updated",
@@ -33,14 +39,14 @@ def test_update_user():
     )
     
     updated_user = update_user(
-        user_dict["id"],
+        user_dict.id,
         update_body
     )
     
-    assert updated_user["id"] == user_dict["id"]
-    assert updated_user["first_name"] == "updated"
-    assert updated_user["last_name"] == "user"
-    assert updated_user["age"] == 20
+    assert updated_user.id == user_dict.id
+    assert updated_user.first_name == "updated"
+    assert updated_user.last_name == "user"
+    assert updated_user.age == 20
     
     with engine_test.begin() as connection:
         result = connection.execute(
@@ -50,14 +56,19 @@ def test_update_user():
                 WHERE id = :user_id
             """),
             {
-                "user_id": user_dict["id"]
+                "user_id": user_dict.id
             }
         )
         
         user_test = result.fetchone()
         
         assert user_test is not None
-        assert updated_user == dict(user_test._mapping)
+        assert updated_user == ResponseUser(
+                id=user_test.id,
+                first_name=user_test.first_name,
+                last_name=user_test.last_name,
+                age=user_test.age
+            )
     
     with engine_test.begin() as connection:
         connection.execute(
@@ -66,6 +77,6 @@ def test_update_user():
                 WHERE id = :user_id
             """),
             {
-                "user_id": user_dict["id"]
+                "user_id": user_dict.id
             }
         )

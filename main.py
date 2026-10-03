@@ -1,4 +1,4 @@
-from schemes.config import app
+from schemes.api_app import app
 from schemes.api_router import router
 
 import rest_request.get_users

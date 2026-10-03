@@ -1,4 +1,4 @@
 from fastapi.testclient import TestClient
-from schemes.config import app
+from schemes.api_app import app
 
 client = TestClient(app)

@@ -3,6 +3,7 @@ from rest_request.post_users import create_user
 from schemes.client_router import client
 from schemes.BD.database_test import engine_test
 from schemes.model import CreateUser
+from schemes.model import ResponseUser
 from sqlalchemy import text
 
 get_module.engine = engine_test
@@ -24,13 +25,18 @@ def test_create_user():
                 WHERE id = :user_id
             """),
             {
-                "user_id": user["id"]
+                "user_id": user.id
             }
         )
         user_test = result.fetchone()
         
         assert user_test is not None
-        assert user == dict(user_test._mapping)
+        assert user == ResponseUser(
+                        id=user.id,
+                        first_name=user.first_name,
+                        last_name=user.last_name,
+                        age=user.age,
+                    )
         
         with engine_test.begin() as connection:
             result = connection.execute(
@@ -39,6 +45,6 @@ def test_create_user():
                     WHERE id = :user_id
                 """),
                 {
-                    "user_id": user["id"]
+                    "user_id": user.id
                 }
             )
